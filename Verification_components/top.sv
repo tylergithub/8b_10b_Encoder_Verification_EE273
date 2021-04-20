@@ -37,10 +37,10 @@ initial begin
 	end
 end
 
-//initial begin
-	//$dumpfile("test.vcd");
-	//$dumpvars(9,top);
-//end
+initial begin
+	$dumpfile("test.vcd");
+	$dumpvars(9,top);
+end
 	
 dut gs0(intf.dut);
 

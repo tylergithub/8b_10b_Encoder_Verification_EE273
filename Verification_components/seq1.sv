@@ -43,13 +43,18 @@ endtask : busyx
 
 task body();
 	si=testsi::type_id::create("sequence_item");
-	repeat(5) resetx();
-	repeat(10) begin
-		si.randomize();
-		pushx(si.data);
-		startx();
+	repeat(2) resetx();
+		repeat(4) begin
+			pushx(9'b100111100);
+			startx();
+		end
+		repeat(2) begin
+			si.randomize() with {si.data < 9'h100;};
+			pushx(si.data);
+			startx();
+		end
+		pushx(9'b110111100);
 		busyx();
-	end
 
 endtask : body
 

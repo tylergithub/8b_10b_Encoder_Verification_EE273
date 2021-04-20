@@ -13,7 +13,6 @@ class testsi extends uvm_sequence_item;
 	Dcmd cmd;
 	randc logic [7:0] data;
 	logic pushin,startin;
-	
 	function new(string name="testsi");
 		super.new(name);
 	endfunction : new

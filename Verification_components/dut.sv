@@ -7,13 +7,13 @@ module dut (interfacetest.dut m);
   reg [31:0] crcdata;
   reg [7:0] crcencode;
   reg [9:0] crcencoded;
-  logic [9:0] K285_1 = 10'b1100000101;
-  logic [9:0] K285_2 = 10'b0011111010;
+  logic [9:0] K285_1 = 10'h25C;
+  logic [9:0] K285_2 = 10'h183;
   logic [7:0] K237 = 8'b11110111;
-  reg code;
-  reg [7:0] msg;
+  reg code_d,code,pushin_d,pushin,startin_d,startin;
+  reg [7:0] msg, msg_d;
   reg RD;
-
+  int i=0;
 typedef enum reg[2:0] {
 	reset,
 	push,
@@ -26,52 +26,67 @@ typedef enum reg[2:0] {
 State cur,nxt;
 
 	always@* begin
-		code = datain1[8];
-		msg = datain1[7:0];
+		code_d = code;
+		msg_d = msg;
+		pushin_d = pushin;
+		startin_d = startin;
 		nxt = cur;
+		m.pushout=0;
+		m.startout=0;
+		if (dataout1 != 0) m.pushout = 1;
 		case(cur) 
 			reset: begin
 				nxt = push;
-				m.pushout=0;
 			end
 
 			push: begin
-				if(m.pushin)begin	
+				pushin_d = m.pushin;
+				if(pushin_d)begin	
 					nxt = start;
 					datain1= m.datain;
+					code_d = datain1[8];
+					msg_d = datain1[7:0];
 				end
 			end
 			start: begin
-				if(m.startin)begin
-					dataout1 = encoder(code,msg,RD);
+				startin_d = m.startin;
+				if(startin_d)begin
+
 					nxt = transmit;
 				end
 				else nxt = start;
-				if(!code) begin
-					crc32(msg,crc,crcdata);
+				if(!code_d) begin
+					crcdata = crc32(msg_d,crc);
 				end
-
-				if (dataout1 != 0) m.pushout = 1;
 				
 			end
 			transmit: begin
 				m.startout =1;
+				dataout1 = encoder(code_d ,msg_d ,RD);
 				m.dataout= dataout1;
 				if((dataout1 ==K285_1 )| (dataout1 ==K285_2 )) begin
 					m.dataout = encoder(1,K237,RD);
 					nxt = crctransmit;
-
 				end
-				else nxt = start;
+				else begin
+					nxt = start;
+					crc = 32'hFFFFFFFF;
+				end
 			end
 			crctransmit: begin
-				
-				for(int i=0;i<4;i++) begin
-					crcencode = crcdata[8*i + 7 -: 8];
-					crcencoded = encoder(0,crcencode,RD);
-					m.dataout = #1 crcencoded; 				
+				 	
+				crcencode = crcdata[8*i + 7 -: 8];
+				crcencoded = encoder(0,crcencode,RD);
+				m.dataout = #5 crcencoded; 				
+				i++;
+				if(i==4) begin
+					i=0;
+					nxt = done;
+					crc= 32'hFFFFFFFF;
 				end
-				nxt = done;
+				else begin
+					nxt = crctransmit;
+				end
 			end
 			done: begin
 				
@@ -85,27 +100,35 @@ State cur,nxt;
 		if(m.reset) begin
 			cur <= reset;
 			dataout1 <=0;
-			crc= 32'hFFFFFFFF;
-			RD = 0;
+			m.dataout <=0;
+			crc <= 32'hFFFFFFFF;
+			RD <= 0;
+			code <= 0;
+			msg <= 0;
+			pushin_d <= 0;
+			startin_d = 0;
 		end
 		else begin
 			cur <= #1 nxt;
+			code <= #1 code_d;
+			msg <= #1 msg_d;
+			pushin <= #1 pushin_d;
+			startin <= #1 startin_d;
 		end
 	end
-	task crc32;
-    	input [7:0] datain2;
-    	inout [31:0]crc;
-      	output [31:0]dataout2;
+	
+	function bit [31:0] crc32;
+	input [7:0] datain2;
+	input [31:0] crc;
 	int j,k;
 	reg [31:0]mask;
 	crc = crc^ datain2;
-		for(j=7;j>=0;j--) begin
-			mask = -(crc&1);
-			crc = (crc>>1)^(32'hEDB88320 & mask);
-		end
-	dataout2 = ~crc;
-    
-    endtask
+	for(j=7;j>=0;j--) begin
+		mask = -(crc&1);
+		crc = (crc>>1)^(32'hEDB88320 & mask);
+	end
+	crc32 = ~crc;
+	endfunction
 
 function [9:0] encoder;
 	input control_bit;

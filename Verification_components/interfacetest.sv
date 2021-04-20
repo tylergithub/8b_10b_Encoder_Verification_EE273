@@ -1,7 +1,7 @@
 interface interfacetest(input reg clk);
 
   reg [8:0]   datain ;
-  reg [31:0]	dataout ;
+  reg [9:0]	dataout ;
   reg pushin;
   reg startin;
   reg pushout;

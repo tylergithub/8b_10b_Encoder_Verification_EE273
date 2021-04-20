@@ -17,7 +17,7 @@ endfunction : build_phase
 task run_phase(uvm_phase phase);
 	forever begin
 		message_in.get(m);
-		`uvm_info("debug",$sformatf("datain: %h crc32 result: %h",m.datain,m.dataout),UVM_MEDIUM)
+		`uvm_info("debug",$sformatf("datain: %h crc32 result: %h pushout: %h startout: %h ",m.datain,m.dataout,m.pushout,m.startout),UVM_MEDIUM)
 
 	end
 
