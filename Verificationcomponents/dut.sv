@@ -75,7 +75,7 @@ State cur,nxt;
 			end
 			done: begin
 				
-				encoder(1,8'b10111100,rd,rd,m.dataout);
+				m.dataout = encoder(1,8'b10111100,RD);
 				nxt = reset;
 			end
 		endcase
@@ -129,7 +129,7 @@ function [9:0] encoder;
 		l13 = (((a ^ b) & !(c | d)) | ((c ^ d) & !(a | b)));	// contains one "1", and three "0"
    		l31 = (((a ^ b) & (c & d)) | ((c ^ d) & (a & b)));		// contains three "1", and three "1"
 
-   		k28 = control_bit && d8[4:0] === 5'b11100
+   		k28 = control_bit && (d8[4:0] === 5'b11100);
 
    		// variable that indicate if we should use A7 or P7:
    		DXA7_P7 = control_bit | ((l31 & d & !e & running_disparity_input) | (l13 & !d & e & !running_disparity_input));
@@ -331,7 +331,7 @@ function [9:0] encoder;
 
 //********************************************** 3B -> 4B *******************************************************
 		// start 3b/4b encode:
-		case (db[7:5])
+		case (d8[7:5])
 			3'b000:										// D.x.0 & K.x.0
 				if(running_disparity_after_5b6b)
 					b4 = 4'b0010;
@@ -402,7 +402,7 @@ function [9:0] encoder;
 		endcase
 
 		// function output:
-		decode = b10;
+		encoder = b10;
 
 	end
 
