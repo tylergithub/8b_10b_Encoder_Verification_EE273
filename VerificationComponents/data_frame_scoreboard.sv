@@ -1,5 +1,4 @@
-// Checks the transmitted data against the number of bits per xmit,
-// and the xmit data register
+// checks the frame of input data to the DUT
 
 class data_frame_scoreboard extends uvm_scoreboard;
 `uvm_component_utils(data_frame_scoreboard)
