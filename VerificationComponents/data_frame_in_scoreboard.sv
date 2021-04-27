@@ -1,7 +1,8 @@
 // checks the frame of input data to the DUT
+// Need to add pushin conditions***************************************
 
-class data_frame_scoreboard extends uvm_scoreboard;
-`uvm_component_utils(data_frame_scoreboard)
+class data_frame_in_scoreboard extends uvm_scoreboard;
+`uvm_component_utils(data_frame_in_scoreboard)
 uvm_tlm_analysis_fifo #(mimsg) din_to_dut; // testbench input to the DUT which connected to a monitor
 //uvm_tlm_analysis_fifo #(mimsg) wm;
 
@@ -21,7 +22,7 @@ typedef enum reg[2:0] {
 	Control_28_5
 } CS,NS;
 
-function new(string name="data_frame_scoreboard",uvm_component parent=null);
+function new(string name="data_frame_in_scoreboard",uvm_component parent=null);
 	super.new(name,parent);
 endfunction : new
 
@@ -40,7 +41,7 @@ task run_phase(uvm_phase phase);
 		forever begin
 			din_to_dut.get(msg);
 			case(CS)
-				Reset : 
+				Reset : begin
 					counter = 0;
 					counter_28_5 = 0;
 					if(msg.datain==9'b100111100) begin //datain = K28.1
@@ -51,8 +52,9 @@ task run_phase(uvm_phase phase);
 						//`uvm_error("Error: Expected K.28.1")
 						NS = Reset;
 					end
+				end
 
-				Control_28_1 : 
+				Control_28_1 : begin
 					if(counter < 5 && msg.datain==9'b100111100) begin
 						counter = counter + 1;
 						NS = Control_28_1;
@@ -60,10 +62,11 @@ task run_phase(uvm_phase phase);
 					end begin
 						`uvm_error("Error: Expected K28.1")
 					end
+				end
 
 				// illegal inputs: control signals that are not in the control symbols table.
 				// illegal inputs: 28.1    28.5    23.7
-				Data : 
+				Data : begin
 					if(msg.datain[8]==1) begin // this is control code
 						if(msg.datain==9'b110111100) begin
 							NS = Control_28_5; // K28.5
@@ -71,18 +74,24 @@ task run_phase(uvm_phase phase);
 						end else if(msg.datain==9'b100111100) `uvm_error("Error: 28.1 not allowed") // K28.1
 						else if(msg.datain==9'b111110111) `uvm_error("Error: 23.7 not allowed") // K23.7
 						else if(sg.datain==9'b100011100 || sg.datain==9'b101011100 || sg.datain==9'b101111100 || sg.datain==9'b110011100 || sg.datain==9'b111011100 || sg.datain==9'b111111100 || sg.datain==9'b111111011 || sg.datain==9'b111111101 || sg.datain==9'b111111110) begin // too much case may lead to a compile error!!!!!!!!!!!!!!!!!!!
+							NS = Data;
 							`uvm_info($sformatf("Everything is normal"),UVM_MEDIUM)
 						end else `uvm_error("Error: This data is not allowed")
 					end else NS = Data; // this is normal data input
+				end
 
-				Control_28_5 :
+				Control_28_5 : begin
 					if(counter_28_5 < 11) begin
 						if(msg.pushin==0) begin
 							counter_28_5 = counter_28_5 + 1;
 							`uvm_info($sformatf("Everything is normal"),UVM_MEDIUM)
+							NS = Control_28_5;
 						end else `uvm_error("Error: This data is not allowed")
 					end else NS = Reset;
-				
+				end
+
+				default : NS = Reset;
+
 			endcase // CS
 			CS = NS;
 		end
@@ -91,4 +100,4 @@ endtask : run_phase
 
 
 
-endclass : data_frame_scoreboard
+endclass : data_frame_in_scoreboard
