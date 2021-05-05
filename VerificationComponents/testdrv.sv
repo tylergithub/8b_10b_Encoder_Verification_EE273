@@ -44,6 +44,7 @@ task doStart(testsi m);
 endtask : doStart
 
 task doBusy(testsi m);
+	xx.datain=0;
 	xx.pushin=m.pushin;
 	xx.startin=m.startin;
 	repeat(10) begin

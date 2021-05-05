@@ -5,6 +5,7 @@ class testmon extends uvm_monitor;
 
 virtual interfacetest dut_intf;
 uvm_analysis_port #(msg) pdat;
+uvm_analysis_port #(msg) output10bit;
 msg m;
 
 function new(string name="testmon",uvm_component parent=null);
@@ -19,6 +20,7 @@ endfunction : connect_phase
 
 function void build_phase(uvm_phase phase);
 	pdat=new("msg",this);
+	output10bit= new("out",this);
 endfunction : build_phase
 
 task run_phase(uvm_phase phase);
@@ -29,6 +31,8 @@ task run_phase(uvm_phase phase);
             m.pushout=dut_intf.pushout;
             m.startout=dut_intf.startout;
 			pdat.write(m);
+			if(m.dataout !=0)
+			output10bit.write(m);
 		end
 
 endtask : run_phase

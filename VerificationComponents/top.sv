@@ -8,6 +8,12 @@ import uvm_pkg::*;
 `include "testsi.sv"
 `include "msg.sv"
 `include "testmon.sv"
+`include "crcdone.sv"
+`include "crcsb.sv"
+`include "monin.sv"
+`include "checkK281.sv"
+
+`include "decoder.sv"
 `include "testsb.sv"
 `include "seq1.sv"
 `include "testseqr.sv"

@@ -45,17 +45,18 @@ endtask : busyx
 
 task body();
 	si=testsi::type_id::create("sequence_item");
+	repeat (5) begin
 		repeat (2) resetx();
 		repeat(4) begin
-			pushx(9'b100111100);
+			pushx(9'b100111100); //4 packet of 28.1
 		end
 		repeat(2) begin
-			si.randomize() with {si.data < 9'h100;};
+			si.randomize(); //change it to inside...
 			pushx(si.data);
 		end
-		pushx(9'h1BC);
-		busyx();
-
+		pushx(9'h1BC); // 28.5
+		busyx(); //wait for 10 clock cycle
+	end
 endtask : body
 
 

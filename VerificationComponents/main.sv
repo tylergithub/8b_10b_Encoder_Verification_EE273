@@ -5,8 +5,15 @@ class main extends uvm_test;
 seq1 sq1;
 testseqr sqr;
 testdrv  drv;
-testmon monin;
+
+testmon monout;
 testsb sb;
+crcdone crcd;
+decoder decode;
+checkK281 K28_1;
+crcsb crc32sb;
+
+monin monin1;
 
 
 function new(string name="main",uvm_component parent=null);
@@ -16,14 +23,24 @@ endfunction : new
 function void build_phase(uvm_phase phase);
 	sqr = testseqr::type_id::create("sqr",this);
 	drv = testdrv::type_id::create("drv",this);
-	monin = testmon::type_id::create("monin",this);
+	monout = testmon::type_id::create("monout",this);
+	monin1 = monin::type_id::create("monin1",this);
 	sb = testsb::type_id::create("sb",this);
+	K28_1 = checkK281::type_id::create("K28_1",this);
+	decode = decoder::type_id::create("decode",this);
+	crc32sb = crcsb::type_id::create("crc32sb",this);
+	crcd = crcdone::type_id::create("crcd",this);
 endfunction : build_phase
 
 
 function void connect_phase(uvm_phase phase);
 	drv.seq_item_port.connect(sqr.seq_item_export);
-	monin.pdat.connect(sb.message_in.analysis_export);
+	monin1.dat.connect(K28_1.K281_in.analysis_export);
+	monin1.data8bit.connect(crc32sb.indata.analysis_export);
+	monout.pdat.connect(sb.message_in.analysis_export);
+	monout.output10bit.connect(decode.tenbit.analysis_export);
+	crc32sb.crcexpected.connect(crcd.expected.analysis_export);
+	decode.crcsent.connect(crcd.crcport.analysis_export);
 endfunction : connect_phase
 
 task run_phase(uvm_phase phase);
