@@ -364,32 +364,32 @@ function [9:0] encoder;
 				else
 					b4 = 4'b1101;
 			3'b001:										// D.x.1 & K.x.1
-				if(k28 && running_disparity_after_5b6b) // Need to verify this************************
+				if(k28 && !running_disparity_after_5b6b) // Need to verify this************************
 					b4 = 4'b0110;
 				else
 					b4 = 4'b1001;
 			3'b010:										// D.x.2 & K.x.2
-				if(k28 && running_disparity_after_5b6b) // Need to verify this************************
+				if(k28 && !running_disparity_after_5b6b) // Need to verify this************************
 					b4 = 4'b0101;
 				else
 					b4 = 4'b1010;
 			3'b011:										// D.x.3 & K.x.3
-				if(running_disparity_after_5b6b) 		// Need to verify this************************
-					b4 = 4'b1100;
-				else
+				if(!running_disparity_after_5b6b) 		// Need to verify this************************
 					b4 = 4'b0011;
+				else
+					b4 = 4'b1100;
 			3'b100:										// D.x.4 & K.x.4
 				if(running_disparity_after_5b6b) // Need to verify this************************
 					b4 = 4'b0100;
 				else
 					b4 = 4'b1011;
 			3'b101:										// D.x.5 & K.x.5
-				if(k28 && running_disparity_after_5b6b) // Need to verify this************************
+				if(k28 && !running_disparity_after_5b6b) // Need to verify this************************
 					b4 = 4'b1010;
 				else
 					b4 = 4'b0101;
 			3'b110:										// D.x.6 & K.x.6
-				if(k28 && running_disparity_after_5b6b) // Need to verify this************************
+				if(k28 && !running_disparity_after_5b6b) // Need to verify this************************
 					b4 = 4'b1001;
 				else
 					b4 = 4'b0110;
