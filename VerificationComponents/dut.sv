@@ -1,5 +1,3 @@
-
-
 module dut (interfacetest.dut m);
   reg [8:0]   datain1 =0; 
   reg [31:0] crc= 32'hFFFFFFFF;
@@ -11,7 +9,7 @@ module dut (interfacetest.dut m);
   logic [7:0] K237 = 8'b111_10111;
   reg code_d,code,pushin,startin_d;
   reg [7:0] msg, msg_d;
-  reg RD;
+  reg RD=0;
   reg eventc,eventc_d;
   reg [2:0]i=0;
   reg [2:0]i_d=0;
@@ -22,7 +20,8 @@ typedef enum reg[2:0] {
 	start,  //001
 
 	crctransmit,  //010
-	done //011
+	done, //011
+	resetdone
 } State;
 
 State cur,nxt;
@@ -36,7 +35,6 @@ State cur,nxt;
 		nxt = cur;
 		m.pushout=0;
 		m.startout=0;
-		if (dataout1 != 0) m.pushout = 1;
 		if(m.pushin)begin	
 				datain1_d= m.datain;
 				code_d = datain1_d[8];
@@ -52,6 +50,7 @@ State cur,nxt;
 				dataout1 = encoder(code_d ,msg_d ,RD);
 				m.dataout= dataout1;
 		end	
+		if (dataout1 != 0) m.pushout = 1;
 		if(cur == crctransmit) begin
 				i_d=i+1;
 		end	
@@ -61,7 +60,7 @@ State cur,nxt;
 			end
 			
 			start: begin
-					m.startout =1;
+
 					if(eventc) begin
 						crcdata=  crc32(msg_d);
 						eventc=0;
@@ -92,8 +91,17 @@ State cur,nxt;
 				m.dataout = encoder(1,K285,RD);
 				datain1_d=0;
 				msg_d=0;
+				RD=0;
+				i_d=0;
+				nxt = resetdone;
+			end
+			resetdone : begin
+				dataout1=0;
+				m.startout =0;
+				m.dataout=0;
 				nxt = reset;
 			end
+
 		endcase
 	end
 
