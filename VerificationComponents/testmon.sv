@@ -6,6 +6,8 @@ class testmon extends uvm_monitor;
 virtual interfacetest dut_intf;
 uvm_analysis_port #(msg) pdat;
 uvm_analysis_port #(msg) output10bit;
+uvm_analysis_port #(msg) outputonly;
+reg [4:0]counter;
 msg m;
 
 function new(string name="testmon",uvm_component parent=null);
@@ -21,6 +23,7 @@ endfunction : connect_phase
 function void build_phase(uvm_phase phase);
 	pdat=new("msg",this);
 	output10bit= new("out",this);
+	outputonly= new("datout",this);
 endfunction : build_phase
 
 task run_phase(uvm_phase phase);
@@ -31,8 +34,18 @@ task run_phase(uvm_phase phase);
             m.pushout=dut_intf.pushout;
             m.startout=dut_intf.startout;
 			pdat.write(m);
-			if(m.dataout !=0)
-			output10bit.write(m);
+			if(m.dataout !=0) begin
+				output10bit.write(m);
+				outputonly.write(m);
+				counter =0;
+			end
+			else begin
+				counter = counter+1;
+				if(counter ==20) begin
+						`uvm_fatal("ZeroOutput",$sformatf("Missing output for 20 clock cycle"))
+						counter =0;
+				end
+			end
 		end
 
 endtask : run_phase

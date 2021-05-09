@@ -66,7 +66,8 @@ State cur,nxt;
 						eventc=0;
 					end
 
-				if((msg_d ==K285 && code_d )) begin
+				if((msg_d ==K285 && code_d && startin_d)) begin
+					m.startout =1;	
 					m.dataout = encoder(1,K237,RD);
 					nxt = crctransmit;
 					crc = 32'hFFFFFFFF;

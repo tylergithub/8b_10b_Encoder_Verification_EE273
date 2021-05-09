@@ -39,7 +39,7 @@ endtask : doPush
 
 task doStart(testsi m);
 	xx.pushin=1;
-	xx.startin=1;
+	xx.startin=0;
 	@(posedge(xx.clk)) #1;
 endtask : doStart
 

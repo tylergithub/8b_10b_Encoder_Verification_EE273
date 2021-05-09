@@ -445,7 +445,7 @@ task run_phase(uvm_phase phase);
 				end
 			end			
 			if(n.datain == 9'h1BC) crcflag=1;
-
+				
 		end
 
 	end
