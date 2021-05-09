@@ -12,8 +12,6 @@ task resetx();
 		start_item(si);
 		si.cmd=reset;
 		si.data=0;
-		si.pushin=0;
-		si.startin=0;
 		finish_item(si);
 endtask : resetx
 
@@ -21,16 +19,12 @@ task pushx(input reg[8:0] data);
 		start_item(si);
 		si.cmd=push;
 		si.data=data;
-		si.pushin=1;
-		si.startin=1;
 		finish_item(si);
 endtask : pushx
 
 task startx();
 		start_item(si);
 		si.cmd=startin;
-		si.pushin=1;
-		si.startin=1;
 		finish_item(si);
 endtask : startx
 
@@ -38,8 +32,6 @@ endtask : startx
 task busyx();
 		start_item(si);
 		si.cmd=waitbusy;
-		si.pushin=0;
-		si.startin=0;
 		finish_item(si);
 endtask : busyx
 

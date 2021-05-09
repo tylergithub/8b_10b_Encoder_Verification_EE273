@@ -28,9 +28,9 @@ task run_phase(uvm_phase phase);
 	if(!dut_intf.reset) begin
 		m=new();  //u cant use the message u made in sequence item cause its not connected
 		m.datain=dut_intf.datain;
-		//if(dut_intf.datain[8]) begin
-			//dat.write(m.datain[7:0]);
-		//end 
+		if(dut_intf.datain[8]) begin
+			dat.write(m.datain[7:0]);
+		end 
 		if (!dut_intf.datain[8] | dut_intf.datain == 9'h1BC) begin
 			data8bit.write(m.datain);
 		end

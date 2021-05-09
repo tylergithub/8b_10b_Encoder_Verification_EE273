@@ -22,8 +22,8 @@ endfunction : connect_phase
 task doReset(testsi m);
 	xx.reset=1;
 	xx.datain=0;
-	xx.pushin=m.pushin;
-	xx.startin=m.startin;
+	xx.pushin=0;
+	xx.startin=0;
 	@(posedge(xx.clk)) #1;
 	xx.reset=0;
 	
@@ -32,21 +32,21 @@ endtask : doReset
 task doPush(testsi m);
 
 	xx.datain=m.data;
-	xx.pushin=m.pushin;
-	xx.startin=m.startin;
+	xx.pushin=1;
+	xx.startin=1;
 	@(posedge(xx.clk)) #1;
 endtask : doPush
 
 task doStart(testsi m);
-	xx.pushin=m.pushin;
-	xx.startin=m.startin;
+	xx.pushin=1;
+	xx.startin=1;
 	@(posedge(xx.clk)) #1;
 endtask : doStart
 
 task doBusy(testsi m);
 	xx.datain=0;
-	xx.pushin=m.pushin;
-	xx.startin=m.startin;
+	xx.pushin=0;
+	xx.startin=0;
 	repeat(10) begin
 		@(posedge(xx.clk)) #1;
 	end
