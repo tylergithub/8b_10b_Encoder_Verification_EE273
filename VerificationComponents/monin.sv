@@ -5,7 +5,7 @@ class monin extends uvm_monitor;
 virtual interfacetest dut_intf;
 uvm_analysis_port #(reg[7:0]) dat;
 uvm_analysis_port #(reg[8:0]) data8bit;
-
+uvm_analysis_port #(msg) data8bit_for_frame;
 msg m;
 
 
@@ -22,6 +22,7 @@ endfunction : connect_phase
 function void build_phase(uvm_phase phase);
 	dat=new("inputmsg",this);
 	data8bit=new("data8bit",this);
+	data8bit_for_frame=new("data8bit_for_frame",this);
 
 endfunction : build_phase
 
@@ -37,6 +38,10 @@ task run_phase(uvm_phase phase);
 		if (!m.datain[8] | dut_intf.datain == 9'h1BC) begin
 			data8bit.write(m.datain);
 		end
+		m.dataout=dut_intf.dataout;
+        m.pushin=dut_intf.pushin;
+        m.startin=dut_intf.startin;
+		data8bit_for_frame.write(m);
 		
 	end	
 	

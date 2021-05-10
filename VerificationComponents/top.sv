@@ -13,6 +13,8 @@ import uvm_pkg::*;
 `include "monin.sv"
 //`include "checkK281.sv"
 `include "K237.sv"
+`include "data_frame_in_scoreboard.sv"
+`include "data_frame_out_scoreboard.sv"
 `include "decoder.sv"
 `include "testsb.sv"
 `include "seq1.sv"
