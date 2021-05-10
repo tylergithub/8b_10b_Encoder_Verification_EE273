@@ -104,10 +104,10 @@ task run_phase(uvm_phase phase);
 						if(msg.pushin==0) begin
 							if(counter_28_5==9) begin
 								NS = Reset;
-								`uvm_info(get_type_name(),$sformatf("Has been busy for %d cycles, now reseting...; Data received: %h; This is round: %d",counter_28_5,msg.datain,everyCycle),UVM_MEDIUM)
+								`uvm_info(get_type_name(),$sformatf("Has been busy for %d cycles, now reseting...; Data received: %h; This is round: %d",counter_28_5+1,msg.datain,everyCycle),UVM_MEDIUM)
 							end else begin
-								counter_28_5 = counter_28_5 + 1;
 								`uvm_info(get_type_name(),$sformatf("Busy cycle......counter = %d; Data received: %h; This is round: %d",counter_28_5,msg.datain,everyCycle),UVM_MEDIUM)
+								counter_28_5 = counter_28_5 + 1;
 								NS = Control_28_5;
 							end
 						end else `uvm_error(get_type_name(),$sformatf("Error: This data is not allowed while inside busy state; Data received: %h; This is round: %d",msg.datain,everyCycle))

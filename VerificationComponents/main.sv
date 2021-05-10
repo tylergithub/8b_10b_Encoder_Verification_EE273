@@ -12,7 +12,7 @@ crcdone crcd;
 decoder decode;
 K237 K23_7;
 data_frame_in_scoreboard framein;
-//data_frame_out_scoreboard frameout;
+data_frame_out_scoreboard frameout;
 //checkK281 K28_1;
 crcsb crc32sb;
 
@@ -30,7 +30,7 @@ function void build_phase(uvm_phase phase);
 	monin1 = monin::type_id::create("monin1",this);
 	sb = testsb::type_id::create("sb",this);
 	framein = data_frame_in_scoreboard::type_id::create("framein",this);
-//	frameout = data_frame_out_scoreboard::type_id::create("frameout",this);
+	frameout = data_frame_out_scoreboard::type_id::create("frameout",this);
 //	K28_1 = checkK281::type_id::create("K28_1",this);
 	decode = decoder::type_id::create("decode",this);
 	crc32sb = crcsb::type_id::create("crc32sb",this);
