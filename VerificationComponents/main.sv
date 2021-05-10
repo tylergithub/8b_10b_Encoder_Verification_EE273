@@ -11,7 +11,7 @@ testsb sb;
 crcdone crcd;
 decoder decode;
 K237 K23_7;
-checkK281 K28_1;
+//checkK281 K28_1;
 crcsb crc32sb;
 
 monin monin1;
@@ -27,7 +27,7 @@ function void build_phase(uvm_phase phase);
 	monout = testmon::type_id::create("monout",this);
 	monin1 = monin::type_id::create("monin1",this);
 	sb = testsb::type_id::create("sb",this);
-	K28_1 = checkK281::type_id::create("K28_1",this);
+//	K28_1 = checkK281::type_id::create("K28_1",this);
 	decode = decoder::type_id::create("decode",this);
 	crc32sb = crcsb::type_id::create("crc32sb",this);
 	crcd = crcdone::type_id::create("crcd",this);
@@ -37,7 +37,7 @@ endfunction : build_phase
 
 function void connect_phase(uvm_phase phase);
 	drv.seq_item_port.connect(sqr.seq_item_export);
-	monin1.dat.connect(K28_1.K281_in.analysis_export);
+//	monin1.dat.connect(K28_1.K281_in.analysis_export);
 	monin1.data8bit.connect(crc32sb.indata.analysis_export);
 
 	monout.pdat.connect(sb.message_in.analysis_export);
