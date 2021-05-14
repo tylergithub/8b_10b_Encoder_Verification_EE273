@@ -42,6 +42,7 @@ task run_phase(uvm_phase phase);
 	fork
 		forever begin
 			dout_from_dut.get(msg);
+			if(msg.dataout !=0) begin
 			case (CS)
 				Control_28_1 : begin
 					counter = 0;
@@ -104,6 +105,7 @@ task run_phase(uvm_phase phase);
 				default : NS = Control_28_1;
 			endcase
 			CS = NS; // update SM
+			end
 		end
 	join
 endtask : run_phase
@@ -111,19 +113,3 @@ endtask : run_phase
 
 
 endclass : data_frame_out_scoreboard
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

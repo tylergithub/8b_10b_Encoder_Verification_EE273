@@ -32,7 +32,7 @@ endfunction :crc32
 task run_phase(uvm_phase phase);
 	forever begin
 		indata.get(m);
-		if(m!=0) begin
+		
 			if(m==9'h1BC) begin
 				crcexpected.write(crcdata);
 				crc=32'hFFFFFFFF;
@@ -41,7 +41,7 @@ task run_phase(uvm_phase phase);
 			else begin
 				crcdata = crc32(m[7:0]);
 			end
-		end
+		
 
 	end
 endtask : run_phase

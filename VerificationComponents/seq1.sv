@@ -37,7 +37,7 @@ endtask : busyx
 
 task body();
 	si=testsi::type_id::create("sequence_item");
-	repeat (5) begin
+	repeat (2) begin
 		repeat (2) resetx();
 		repeat(4) begin
 			pushx(9'b100111100); //4 packet of 28.1

@@ -13,6 +13,11 @@ reg [7:0]decodedone;
 reg [9:0] reversed;
 reg controlbit;
 reg [2:0] count=0;
+typedef enum reg[2:0] {
+	start,
+	crc
+} State;
+State cur,nxt;
 function new(string name="decoder",uvm_component parent=null);
 	super.new(name,parent); //base class
 endfunction : new
@@ -30,10 +35,10 @@ function [7:0] decode10to8;
 	
 	if(controlbit | data[5:0] == 6'b000011 | data[5:0] == 6'b111100) begin
 		case(data[5:0])
-			6'b111100: begin
+			6'b111100: begin //iedcba
 					b5 = 5'b11100;
 					case(data[9:6])
-					4'b0010: b3 = 3'b000;
+					4'b0010: b3 = 3'b000; //jhgf 
 					4'b1001: b3 = 3'b001;
 					4'b1010: b3 = 3'b010;			 
 					4'b1100: b3 = 3'b011;
@@ -365,7 +370,7 @@ function [7:0] decode10to8;
 			end
 		3: begin
 			case(data[9:6])
-					4'b1011: b3 = 3'b000;
+					4'b1101: b3 = 3'b000;
 					4'b0010: b3 = 3'b000;
 					4'b1001: b3 = 3'b001;
 					4'b1010: b3 = 3'b010;
@@ -409,43 +414,42 @@ function [7:0] decode10to8;
 endfunction: decode10to8
 
 
-/*function [9:0] reverse;
-	input [9:0] dataout;
-	reg [9:0] re;
-	reg [3:0]i;
-	reg temp;
-	for(i=0;i<10;i++) begin
-		temp = dataout[i];
-		re[9-i]=temp;
-	end
-	reverse = re;
-endfunction : reverse*/
-
 
 task run_phase(uvm_phase phase);
+	cur=start;
 	forever begin
 		tenbit.get(n);
-		controlbit= n.datain[8];
 		if(n.startout!=0 && n.dataout !=0) begin
-			decodedone = decode10to8(n.dataout);
-			if(decodedone == 8'hFC) begin
-				`uvm_fatal("ILLEGAL",$sformatf("K28.7 is ILLEGAL"));
+		case(cur) 
+			start: begin
+				controlbit= n.datain[8];
+				decodedone = decode10to8(n.dataout);
+				if(decodedone == 8'hFC) begin
+					`uvm_fatal("ILLEGAL",$sformatf("K28.7 is ILLEGAL"));
+				end
+				nxt=start;
+				if(n.datain == 9'h1BC) nxt = crc;
+				else if(decodedone != n.datain[7:0]) `uvm_fatal("decoder",$sformatf("Wrong 10 bit-8bit output: %h vs original input: %h",decodedone,n.datain[7:0]));
+	
 			end
-			
-			`uvm_info("10to8bit",$sformatf("output result: %h", n.dataout),UVM_MEDIUM);
-			`uvm_info("10to8bit",$sformatf("After decode, the result: %h", decodedone),UVM_MEDIUM);
-			if(illegal) `uvm_fatal("decoder",$sformatf("WRONG DECODER FOR 3 to 4 BIT: %h",decodedone));
-			if(crcflag) begin
+			crc: begin
+				controlbit= 0;
+				decodedone = decode10to8(n.dataout);
 				crcdata[8*count +: 8] = decodedone;
 				count = count+1;
 				if(count == 5) begin
 					crcsent.write(crcdata);
 					count=0;
 					crcflag=0;
+					nxt = start;
 				end
+				else nxt = crc;
 			end			
-			if(n.datain == 9'h1BC) crcflag=1;
-				
+			endcase
+			cur=nxt;
+			`uvm_info("10to8bit",$sformatf("output result: %h", n.dataout),UVM_MEDIUM);
+			`uvm_info("10to8bit",$sformatf("After decode, the result: %h", decodedone),UVM_MEDIUM);
+			if(illegal) `uvm_fatal("decoder",$sformatf("Illegal 10 Bit: %h",decodedone));	
 		end
 
 	end

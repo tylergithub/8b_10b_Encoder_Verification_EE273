@@ -7,7 +7,8 @@ virtual interfacetest dut_intf;
 uvm_analysis_port #(msg) pdat;
 uvm_analysis_port #(msg) output10bit;
 uvm_analysis_port #(msg) outputonly;
-reg [4:0]counter;
+uvm_analysis_port #(msg) statuswrite;
+reg [4:0]counter=0;
 msg m;
 
 function new(string name="testmon",uvm_component parent=null);
@@ -24,6 +25,7 @@ function void build_phase(uvm_phase phase);
 	pdat=new("msg",this);
 	output10bit= new("out",this);
 	outputonly= new("datout",this);
+	statuswrite = new("StatSB",this);
 endfunction : build_phase
 
 task run_phase(uvm_phase phase);
@@ -34,6 +36,7 @@ task run_phase(uvm_phase phase);
             m.pushout=dut_intf.pushout;
             m.startout=dut_intf.startout;
 			pdat.write(m);
+			statuswrite.write(m);
 			if(m.dataout !=0) begin
 				output10bit.write(m);
 				outputonly.write(m);

@@ -1,4 +1,3 @@
-
 class monin extends uvm_monitor;
 `uvm_component_utils(monin)
 
@@ -35,7 +34,7 @@ task run_phase(uvm_phase phase);
 		if(m.datain[8]) begin
 			dat.write(m.datain[7:0]);
 		end 
-		if (!m.datain[8] | dut_intf.datain == 9'h1BC) begin
+		if (!m.datain[8] | dut_intf.datain == 9'h1BC && m.pushin) begin
 			data8bit.write(m.datain);
 		end
 		m.dataout=dut_intf.dataout;
@@ -49,4 +48,3 @@ task run_phase(uvm_phase phase);
 endtask : run_phase
 
 endclass : monin
-
