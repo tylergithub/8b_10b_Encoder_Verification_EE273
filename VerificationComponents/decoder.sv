@@ -419,12 +419,13 @@ task run_phase(uvm_phase phase);
 	cur=start;
 	forever begin
 		tenbit.get(n);
-		if(n.startout!=0 && n.dataout !=0) begin
+		if(n.startout && n.dataout !=0) begin
 		case(cur) 
 			start: begin
 				controlbit= n.datain[8];
+				`uvm_info("debug",$sformatf("datain: %h",n.datain),UVM_MEDIUM);
 				decodedone = decode10to8(n.dataout);
-				if(decodedone == 8'hFC) begin
+				if(decodedone == 8'hFC && controlbit) begin
 					`uvm_fatal("ILLEGAL",$sformatf("K28.7 is ILLEGAL"));
 				end
 				nxt=start;

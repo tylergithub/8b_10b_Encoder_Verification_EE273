@@ -33,20 +33,20 @@ task doPush(testsi m);
 
 	xx.datain=m.data;
 	xx.pushin=1;
-	xx.startin=1;
+	xx.startin=0;
 	@(posedge(xx.clk)) #1;
 endtask : doPush
 
 task doStart(testsi m);
-	xx.pushin=1;
-	xx.startin=0;
+	xx.pushin=0;
+	xx.startin=1;
 	@(posedge(xx.clk)) #1;
 endtask : doStart
 
 task doBusy(testsi m);
 	xx.datain=0;
 	xx.pushin=0;
-	xx.startin=0;
+	xx.startin=1;
 	repeat(10) begin
 		@(posedge(xx.clk)) #1;
 	end

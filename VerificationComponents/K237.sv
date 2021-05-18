@@ -21,7 +21,7 @@ task run_phase(uvm_phase phase);
 	forever begin
 		datout.get(l);
 		if(l.datain !=0) begin
-			if(l.datain == 9'h1BC) begin
+			if(l.datain == 9'h1BC && l.startout) begin
 				if(l.dataout == 10'h057 | l.dataout == 10'h3A8) begin
 					`uvm_info("K237",$sformatf("K23.7 is received"),UVM_MEDIUM)
 				end
