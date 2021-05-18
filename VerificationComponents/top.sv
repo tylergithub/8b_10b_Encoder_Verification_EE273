@@ -14,6 +14,7 @@ import uvm_pkg::*;
 `include "K237.sv"
 `include "data_frame_in_scoreboard.sv"
 `include "data_frame_out_scoreboard.sv"
+`include "disparity_scoreboard.sv"
 `include "statussb.sv"
 `include "decoder.sv"
 `include "testsb.sv"

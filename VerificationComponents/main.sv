@@ -13,6 +13,7 @@ decoder decode;
 K237 K23_7;
 data_frame_in_scoreboard framein;
 data_frame_out_scoreboard frameout;
+disparity_scoreboard disparity;
 crcsb crc32sb;
 statussb statussb1;
 monin monin1;
@@ -30,6 +31,7 @@ function void build_phase(uvm_phase phase);
 	sb = testsb::type_id::create("sb",this);
 	framein = data_frame_in_scoreboard::type_id::create("framein",this);
 	frameout = data_frame_out_scoreboard::type_id::create("frameout",this);
+	disparity = disparity_scoreboard::type_id::create("disparity",this);
 	decode = decoder::type_id::create("decode",this);
 	crc32sb = crcsb::type_id::create("crc32sb",this);
 	crcd = crcdone::type_id::create("crcd",this);
@@ -47,6 +49,7 @@ function void connect_phase(uvm_phase phase);
 	monout.output10bit.connect(decode.tenbit.analysis_export);
 	monout.outputonly.connect(K23_7.datout.analysis_export);
 	monout.output10bit.connect(frameout.dout_from_dut.analysis_export);		// format checking scoreboard for
+	monout.output10bit.connect(disparity.dout_from_dut.analysis_export);	// checks for disparity and running disparity
 	monout.statuswrite.connect(statussb1.statusreg.analysis_export);		
 	crc32sb.crcexpected.connect(crcd.expected.analysis_export);
 	decode.crcsent.connect(crcd.crcport.analysis_export);
